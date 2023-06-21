@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13.1
+    restart: always
+    ports:
+        - 5432:5432
+    env_file:
+      - .env
+    networks:
+      - db_network
   web:
     build:
       context: .
@@ -12,13 +21,11 @@ services:
       - 8000:8000
     depends_on:
       - db
-
-  db:
-    image: postgres:13.1
-    restart: always
-    ports:
-        - 5432:5432
     env_file:
       - .env
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - db_network
+networks:
+  db_network:
+    driver: bridge
+
