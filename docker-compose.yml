@@ -10,6 +10,19 @@ services:
       - .env
     networks:
       - db_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 5050:80
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - db_network
+
   web:
     build:
       context: .
@@ -25,6 +38,7 @@ services:
       - .env
     networks:
       - db_network
+
 networks:
   db_network:
     driver: bridge
