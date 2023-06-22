@@ -1,10 +1,8 @@
 from sqlalchemy import Column, Integer, String
-from ..database import Base
-
+from app.data_base import Base
 
 class Car(Base):
     __tablename__ = "cars"
-
     id = Column(Integer, primary_key=True, index=True)
     year = Column(Integer, index=True)
     make = Column(String, index=True)

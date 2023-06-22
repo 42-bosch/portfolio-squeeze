@@ -1,8 +1,17 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=utf-8
+
+RUN apt-get update && \
+    apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/* \
+    apt-get clean
+
 WORKDIR /app
 
-COPY . /app
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 

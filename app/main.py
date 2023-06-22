@@ -1,12 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import engine, Base
-from .routes.car_routes import router
+from .data_base import engine, Base
+from .routes import car_router, user_router
+
 
 ALLOWED_ORIGINS = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost:8080",
 ]
 
@@ -23,7 +22,8 @@ def create_app():
         allow_headers=["*"],
     )
 
-    app.include_router(router)
+    app.include_router(car_router)
+    app.include_router(user_router)
     return app
 
 
