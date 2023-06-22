@@ -4,7 +4,7 @@ from .car_schema import Car
 class UserBase(BaseModel):
     email: str
     permissions: str = "user"
-    password: str
+    hashed_password: str
 
 
 class UserCreate(UserBase):

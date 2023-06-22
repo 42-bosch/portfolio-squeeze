@@ -1,20 +1,11 @@
-import os
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi.middleware.cors import CORSMiddleware
 
+from .data_base import engine, Base
 from .routes import car_router, user_router
 
 
-engine = create_engine(os.environ.get("DATABASE_URL"))
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-
 ALLOWED_ORIGINS = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost:8080",
 ]
 

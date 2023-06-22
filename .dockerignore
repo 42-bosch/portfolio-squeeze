@@ -1,0 +1,13 @@
+*.pyc
+*.pyo
+__pycache__
+
+.env
+
+/lib-python
+
+.pip
+
+/static
+
+/db
