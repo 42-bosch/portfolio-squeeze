@@ -25,7 +25,7 @@ def get_car_by_maker(maker: str, db: Session):
 
 
 def create_car(car: CarCreate, db: Session):
-    db_car = car(
+    db_car = Car(
         maker = car.maker,
         quantity = car.quantity,
         year_birth = car.year_birth,

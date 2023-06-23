@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from ..schemas import car_schema
 from ..controllers import car_controller as car_crud
 from ..data_base import get_db
@@ -11,7 +12,7 @@ car_router = APIRouter()
 def get_cars(car_id: int, db: Session = Depends(get_db)):
     return car_crud.get_car(car_id=car_id, db=db)
 
-@car_router.get("/car/all", response_model=car_schema.Car)
+@car_router.get("/cars", response_model=List[car_schema.Car])
 def get_cars(db: Session = Depends(get_db)):
     return car_crud.get_cars(db=db)
 
