@@ -13,9 +13,11 @@ def get_user(user_id: int, db: Session):
         )
     return user
 
+
 def get_users(db: Session):
     users = db.query(User).all()
     return users
+
 
 def get_user_by_email(email: str, db: Session):
     user = db.query(User).filter(User.email == email).first()
@@ -32,10 +34,15 @@ def create_user(user: UserCreate, db: Session):
         hashed_password=user.hashed_password,
         permissions=user.permissions,
     )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    try:
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
+        )
 
 
 def update_user(user_id: int, user: UserCreate, db: Session):
