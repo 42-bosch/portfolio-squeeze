@@ -15,4 +15,8 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-CMD ["uvicorn", "app.main:app" , "--host", "0.0.0.0", "--reload"]
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD ["bash", "-c", ">/dev/tcp/db/5432 || exit 1"]
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]
+

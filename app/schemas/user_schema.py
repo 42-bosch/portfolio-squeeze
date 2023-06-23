@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class UserBase(BaseModel):
     email: str
     permissions: Optional[str] = "user"
@@ -9,6 +10,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     pass
+
 
 class User(UserBase):
     id: int

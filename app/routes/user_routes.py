@@ -12,9 +12,10 @@ user_router = APIRouter()
 def get_users(user_id: int, db: Session = Depends(get_db)):
     return user_controller.get_user(user_id=user_id, db=db)
 
-@user_router.get("/user/all", response_model=user_schema.User)
+@user_router.get("/users/all")
 def get_users(db: Session = Depends(get_db)):
     return user_controller.get_users(db=db)
+
 
 
 @user_router.post("/user", response_model=user_schema.User)

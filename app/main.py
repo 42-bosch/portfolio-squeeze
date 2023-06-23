@@ -10,21 +10,16 @@ ALLOWED_ORIGINS = [
 ]
 
 
-def create_app():
-    Base.metadata.create_all(bind=engine)
-    app = FastAPI()
+Base.metadata.create_all(bind=engine)
+app = FastAPI()
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=ALLOWED_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    app.include_router(car_router)
-    app.include_router(user_router)
-    return app
-
-
-app = create_app()
+app.include_router(car_router)
+app.include_router(user_router)
