@@ -2,12 +2,9 @@ from pydantic import BaseModel
 
 
 class CarBase(BaseModel):
-    year: int
-    make: str
-    model: str
-    module_Supported: str
-    important_Coverage_Notes: str = None
-    market: str
+    maker:str
+    quantity:int
+    year_birth:int
 
 
 class CarCreate(CarBase):
