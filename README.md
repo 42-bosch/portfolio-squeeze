@@ -1,58 +1,45 @@
-# desafio_bosch_1
+# Challenge_Bosch_1
 
 ## Summary
 
 - [Description](#description)
-- [Requirements](#Requirements)
-- [User](#User)
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [User](#user)
 
 ## Description
 
-This is a straightforward REST API built using FastAPI and SQLAlchemy for the database, all packaged within Docker.
+The Challenge_Bosch_1 is a straightforward REST API built using FastAPI and SQLAlchemy for the database, all packaged within Docker. It provides a simple and efficient way to create, read, update, and delete data through API endpoints.
 
-## requirements
+## Requirements
 
-- python 3.11
-- pip
-- docker
-- docker-compose
+To run the Challenge_Bosch_1, you need the following requirements:
 
-## User
+- Python 3.11
+- Pip
+- Docker
+- Docker Compose
 
-### run in docker
+## Usage
 
-You have to change .env.sample to .env and add values to them
+Follow the steps below to run the Challenge_Bosch_1 in Docker:
+
+1. Rename the file `.env.sample` to `.env` and update the values accordingly.
+
+2. Open a terminal or command prompt and navigate to the project directory.
+
+3. Run the following command to build and start the Docker containers:
 
 ```bash
 docker-compose up -d --build
 ```
 
-### Run in local
+4. Once the containers are up and running, you can access the API endpoints using the provided URLs.
 
-You need to have a postgres database running on port 5432, and create environment variables
+## User
 
-```bash
-export POSTGRES_USER=#your user
-export POSTGRES_PASSWORD=#your password
-export POSTGRES_SERVER=localhost
-export POSTGRES_PORT=5432
-export POSTGRES_DB=#your database
-```
-
-if you not have ambiente virtual, you can create with this commands
+Using a browser access the following URL to access the API documentation:
 
 ```bash
-pip -m venv venv
-```
-
-```bash
-source venv/bin/activate
-```
-
-```bash
-pip install -r requirements.txt
-```
-
-```bash
-uvicorn main:app --reload
+http://localhost:8080/docs
 ```

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  database:
     image: postgres:13.1
     restart: always
     ports:
@@ -9,14 +9,14 @@ services:
     env_file:
       - .env
     networks:
-      - db_network
+      - database_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
-       - ./db/data.sql:/docker-entrypoint-initdb.d/data.sql
+       - ./database/data.sql:/docker-entrypoint-initdb.d/data.sql
 
   pgadmin:
     image: dpage/pgadmin4
@@ -26,28 +26,26 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      - database
     networks:
-      - db_network
+      - database_network
 
-  web:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     restart: always
-    volumes:
-      - .:/app
     ports:
       - 8000:8000
     depends_on:
-      db :
+      database :
         condition: service_healthy
     env_file:
       - .env
     networks:
-      - db_network
+      - database_network
 
 networks:
-  db_network:
+  database_network:
     driver: bridge
 

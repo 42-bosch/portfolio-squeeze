@@ -10,8 +10,9 @@ RUN apt-get update && \
     apt-get clean
 
 WORKDIR /app
-
+VOLUME [ "/app" ]
 COPY requirements.txt .
+COPY . .
 
 RUN pip install -r requirements.txt
 
