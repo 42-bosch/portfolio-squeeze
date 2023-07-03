@@ -1,14 +1,14 @@
 from os import environ
-
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from jose import jwt
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 
 from ..models.user_model import User
-from ..schemas.user_schema import UserCreate, UserUpdate, UserBase, UserLogin
+from ..schemas.user_schema import UserCreate, UserUpdate, UserLogin
 
 
 secret_key = environ.get("SECRET_KEY")
@@ -17,23 +17,26 @@ crypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def login_user(user: UserLogin, session_db: Session, expires_delta: int = 30):
+    print("entrou no login_user")
     query_user = session_db.query(User)
-    db_user = query_user.filter(User.email == user.email).first()
+    db_user = query_user.filter(User.email == user.username).first()
 
-    if db_user is None or not db_user.verify_password(user.hashed_password):
+    if db_user is None or not db_user.verify_password(user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credentials icorrect",
         )
 
-    expires_delta = timedelta(minutes=expires_delta)
-    access_token_expires = datetime.utcnow() + expires_delta
+    access_token_expires = datetime.utcnow() + timedelta(minutes=expires_delta)
     payload = {
         "sub": db_user.email,
         "exp": access_token_expires,
     }
     access_token = jwt.encode(payload, secret_key, algorithm=algorithm)
-    return {"access_token": access_token, "expires": expires_delta}
+    return {
+        "access_token": access_token,
+        "expires": access_token_expires.isoformat(),
+    }
 
 
 def create_user(user: UserCreate, session_db: Session):
@@ -46,7 +49,6 @@ def create_user(user: UserCreate, session_db: Session):
         session_db.add(db_user)
         session_db.commit()
         session_db.refresh(db_user)
-        return db_user
     except:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -68,7 +70,6 @@ def update_user(id: int, user: UserUpdate, session_db: Session):
         db_user.hashed_password = crypt_context.hash(user.hashed_password)
     session_db.commit()
     session_db.refresh(db_user)
-    return db_user
 
 
 def delete_user(id: int, session_db: Session):
@@ -81,4 +82,3 @@ def delete_user(id: int, session_db: Session):
         )
     session_db.delete(db_user)
     session_db.commit()
-    return db_user

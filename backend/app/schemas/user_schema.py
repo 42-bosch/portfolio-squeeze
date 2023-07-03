@@ -27,7 +27,6 @@ class UserLogin(BaseModel):
     email: str
     hashed_password: str
 
-
 class UserCreate(UserBase):
     pass
 

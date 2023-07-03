@@ -4,9 +4,9 @@ from typing import List
 
 from ..schemas import car_schema
 from ..controllers import car_controller as car_crud
-from ..depends import get_session_current_db
+from ..depends import get_session_current_db, verify_token
 
-car_router = APIRouter()
+car_router = APIRouter(dependencies=[Depends(verify_token)])
 
 
 # GET ONE CAR
