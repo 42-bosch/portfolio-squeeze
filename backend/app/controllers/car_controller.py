@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from ..models.car_model import Car
+from app.models.car_model import Car
 from ..schemas.car_schema import CarCreate
 
 
