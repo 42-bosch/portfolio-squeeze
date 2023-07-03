@@ -4,11 +4,9 @@ from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-
-from ..models.user_model import User
-from ..schemas.user_schema import UserCreate, UserUpdate, UserLogin
+from app.models.user_model import User
+from app.schemas.user_schema import UserBase, UserUpdate, UserLogin
 
 
 secret_key = environ.get("SECRET_KEY")
@@ -16,15 +14,14 @@ algorithm = environ.get("ALGORITHM")
 crypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def login_user(user: UserLogin, session_db: Session, expires_delta: int = 30):
+def crud_login_user(user: UserLogin, session_db: Session, expires_delta: int = 30):
     print("entrou no login_user")
     query_user = session_db.query(User)
     db_user = query_user.filter(User.email == user.username).first()
 
     if db_user is None or not db_user.verify_password(user.password):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credentials icorrect",
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credentials icorrect"
         )
 
     access_token_expires = datetime.utcnow() + timedelta(minutes=expires_delta)
@@ -33,13 +30,10 @@ def login_user(user: UserLogin, session_db: Session, expires_delta: int = 30):
         "exp": access_token_expires,
     }
     access_token = jwt.encode(payload, secret_key, algorithm=algorithm)
-    return {
-        "access_token": access_token,
-        "expires": access_token_expires.isoformat(),
-    }
+    return {"access_token": access_token, "expires": access_token_expires.isoformat()}
 
 
-def create_user(user: UserCreate, session_db: Session):
+def crud_create_user(user: UserBase, session_db: Session):
     db_user = User(
         email=user.email,
         username=user.username,
@@ -51,34 +45,38 @@ def create_user(user: UserCreate, session_db: Session):
         session_db.refresh(db_user)
     except:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User already exists",
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
         )
+    return {"message": "User created successfully"}
 
 
-def update_user(id: int, user: UserUpdate, session_db: Session):
-    query_user = session_db.query(User)
-    db_user = query_user.filter(User.id == id).first()
-    if not db_user:
+def crud_update_user(
+    password_confirmation: str,
+    current_user: UserBase,
+    update_user: UserUpdate,
+    session_db: Session,
+):
+    if not current_user.verify_password(password_confirmation):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Password incorrect"
         )
-    db_user.email = user.email
-    db_user.username = user.username
-    if user.hashed_password:
-        db_user.hashed_password = crypt_context.hash(user.hashed_password)
+    if update_user.email:
+        current_user.email = update_user.email
+    if update_user.username:
+        current_user.username = update_user.username
+    if update_user.password:
+        current_user.hashed_password = crypt_context.hash(update_user.password)
+        print("entrou no update_user.password")
     session_db.commit()
-    session_db.refresh(db_user)
+
+    return {"message": "User updated successfully"}
 
 
-def delete_user(id: int, session_db: Session):
-    query_user = session_db.query(User)
-    db_user = query_user.filter(User.id == id).first()
-    if not db_user:
+def crud_delete_user(user, password: str, session_db: Session):
+    if not user.verify_password(password):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Password incorrect"
         )
-    session_db.delete(db_user)
+    session_db.delete(user)
     session_db.commit()
+    return {"message": "User deleted successfully"}

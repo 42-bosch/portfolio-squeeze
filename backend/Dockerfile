@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
+FROM python:3.11
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -11,10 +11,13 @@ RUN apt-get update && \
 
 WORKDIR /app
 VOLUME [ "/app" ]
-COPY requirements.txt .
 COPY . .
 
-RUN pip install -r requirements.txt
+WORKDIR /app
+ENV PYTHONPATH=${PYTHONPATH}:${PWD}
+RUN pip3 install poetry \
+    && poetry config virtualenvs.create false \
+    && poetry install --no-dev
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]
 
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]

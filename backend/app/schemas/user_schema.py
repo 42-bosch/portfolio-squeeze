@@ -1,4 +1,4 @@
-import re
+from re import match as re_match
 from pydantic import BaseModel, validator
 from typing import Optional
 
@@ -13,28 +13,38 @@ class UserBase(BaseModel):
 
     @validator("username")
     def username_validator(cls, value):
-        if not re.match(REGEX_USERNAME, value):
+        if not re_match(REGEX_USERNAME, value):
             raise ValueError("Invalid username")
         return value
 
     @validator("email")
     def email_validator(cls, value):
-        if not re.match(REGEX_EMAIL, value):
+        if not re_match(REGEX_EMAIL, value):
             raise ValueError("Invalid email address")
         return value
+
 
 class UserLogin(BaseModel):
     email: str
     hashed_password: str
 
-class UserCreate(UserBase):
-    pass
-
-
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     email: Optional[str]
     username: Optional[str]
-    hashed_password: Optional[str]
+    password: Optional[str]
+
+    @validator("username")
+    def username_validator(cls, value):
+        if not re_match(REGEX_USERNAME, value) and value != "":
+            raise ValueError("Invalid username")
+        return value
+
+    @validator("email")
+    def email_validator(cls, value):
+        if not re_match(REGEX_EMAIL, value) and value != "":
+            raise ValueError("Invalid email address")
+        return value
+
 
 
 class User(UserBase):
