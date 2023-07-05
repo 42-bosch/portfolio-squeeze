@@ -15,7 +15,6 @@ crypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def crud_login_user(user: UserLogin, session_db: Session, expires_delta: int = 30):
-    print("entrou no login_user")
     query_user = session_db.query(User)
     db_user = query_user.filter(User.email == user.username).first()
 
@@ -66,7 +65,6 @@ def crud_update_user(
         current_user.username = update_user.username
     if update_user.password:
         current_user.hashed_password = crypt_context.hash(update_user.password)
-        print("entrou no update_user.password")
     session_db.commit()
 
     return {"message": "User updated successfully"}

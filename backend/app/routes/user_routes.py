@@ -35,7 +35,8 @@ def route_create_user(
 
 
 @user_router.delete(
-    "/delete", response_model=Dict[str, str], dependencies=[Depends(verify_token)]
+    "/delete", response_model=Dict[str, str],
+     dependencies=[Depends(verify_token)]
 )
 def route_delete_user(
     password: str,
